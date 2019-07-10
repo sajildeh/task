@@ -1,0 +1,39 @@
+from django.shortcuts import render
+from rest_framework.generics import GenericAPIView
+from rest_framework.mixins import ListModelMixin
+
+from .models import CPU
+from .serializers import CPUSerializer
+
+class CPUView(ListModelMixin, GenericAPIView):
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, *kwargs)
+        
+    def get_queryset(self):
+        return CPU.objects.all()
+    
+    def get_data(self):    
+    	queryset = CPU.objects.all()
+    	db = pymysql.connect("localhost","myprojectuser","Saji@1234","myproject" )
+    
+    	# prepare a cursor object using cursor() method
+    	cursor = db.cursor()
+    
+    	sql = "SELECT * FROM CPU"
+    
+    	try:
+       	# Execute the SQL command
+       	cursor.execute(sql)
+       	# Fetch all the rows in a list of lists.
+       	results = cursor.fetchall()
+       	return results
+    	except:
+       	print ("Error: unable to fecth data")
+       	return []
+
+#       for row in results:
+#          date = row[1]
+#          cpuColumn = row[2]
+#    print(queryset)
+#    serializer_class = CPUSerializer(queryset)  
